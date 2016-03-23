@@ -1,5 +1,7 @@
 var React = require('react');
 var GoogleMaps = require('./../react-google-maps/index.jsx');
+var MainStore = require('../../stores/main.js');
+var GeoUtil = require('../../util/geo.js');
 
 var TheMap = React.createClass({
     getInitialState: function() {
@@ -14,18 +16,53 @@ var TheMap = React.createClass({
     },
     
     _onDirectionCalculated: function(polyline) {
-       console.log(polyline); 
+        var wkt = GeoUtil.convertPolylineToLineStringWKT(polyline);
+        this.props.onWkt(wkt);
     } ,
     
     _onClick(event) {
-        console.log("on click");
+        var lat = event.latLng.lat();
+        var lng = event.latLng.lng();
+        var marker = {};
+        marker.coordinates = {lat:lat, lng:lng};
+        marker.content = '<div class="markerTextDiv">Start</div>'
+        var markers = this.state.markers;
+        markers[0] = marker;
+        
+        this.setState({markers: markers});
     },
     
     _onRightClick(event) {
-        console.log("on right click");
+        var lat = event.latLng.lat();
+        var lng = event.latLng.lng();
+        var marker = {};
+        marker.coordinates = {lat:lat, lng:lng};
+        marker.content = '<div class="markerTextDiv">End</div>'
+        var markers = this.state.markers;
+        markers[1] = marker;
+        
+        this.setState({markers: markers});
+    },
+    
+    componentDidMount: function() {
+        var that = this;
+        MainStore.addExecutionListener(function() {
+            
+            if (that.state.markers.length === 2) {
+                console.log('GOT IN');
+                console.log(that.state.markers.length);
+                var start = that.state.markers[0];
+                var end = that.state.markers[1];
+                var direction = {startPoint:{lat: start.coordinates.lat, lng: start.coordinates.lng}, endPoint:{lat: end.coordinates.lat, lng:end.coordinates.lng}};
+                that.setState({direction:direction});
+            } else {
+                alert('Not enough markers!');
+            }
+        });
     },
     
     render : function() {
+        
         return (
             <div className="mapsWrapper">
                 <GoogleMaps 
@@ -37,7 +74,7 @@ var TheMap = React.createClass({
                     mapTypeControl={this.state.mapTypeControl} 
                     elId="mapId" 
                     googleMapsClassName="googleMaps"    
-                    direction={{startPoint:{lat: 41.088067, lng: 29.007115}, endPoint:{lat: 41.091245, lng:29.005088}}}
+                    direction={this.state.direction}
                     onDirectionCalculatedPolylineMode={this._onDirectionCalculated}
                     onClick={this._onClick}
                     onRightClick={this._onRightClick}

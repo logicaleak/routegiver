@@ -6,12 +6,22 @@ var Router = reactRouter.Router;
 var Route = reactRouter.Route;
 var React = require('react');
 
+var actions = require('./actions/main.js');
+
 var App = React.createClass({
+    
+    onExecuteClick: function() {
+        actions.execute();
+    },
+    
+    _onWkt: function(wkt) {
+        this.refs.textarea.value = wkt;
+    },
 	render: function() {
 		return (
 			<div className="container">
                 <div className="mapBox">
-                    <TheMap />
+                    <TheMap onWkt={this._onWkt}/>
                 </div>
                 
                 <div className="controlBox">
@@ -24,13 +34,13 @@ var App = React.createClass({
                             <button className="lineMode">Line Mode</button>
                         </div>
                         <div className="buttonDiv">
-                            <button className="execute">Execute</button>
+                            <button onClick={this.onExecuteClick} className="execute">Execute</button>
                         </div>
                     </div>
                     
                     <div className="dataPanel">
                         <div className="dataDiv">
-                            <textarea className="datatextarea" />
+                            <textarea ref="textarea" className="datatextarea" />
                         </div>
                     </div>
                 </div>

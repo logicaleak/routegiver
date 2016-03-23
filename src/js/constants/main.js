@@ -1,6 +1,6 @@
-var keyMirror = require('react/lib/keyMirror');
+// var keyMirror = require('react/lib/keyMirror');
 
 // Define action constants
-module.exports = keyMirror({
-  EXAMPLE: null, 
-});
+module.exports = {
+  EXECUTE: "EXECUTE"
+};
