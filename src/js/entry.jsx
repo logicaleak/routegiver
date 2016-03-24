@@ -14,6 +14,10 @@ var App = React.createClass({
         actions.execute();
     },
     
+    onResetClick: function() {
+    
+    },
+    
     _onWkt: function(wkt) {
         this.refs.textarea.value = wkt;
     },

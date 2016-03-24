@@ -6,9 +6,7 @@ var actions = {
         AppDispatcher.dispatch({
             actionType: actionConstants.EXECUTE
         });
-    } 
-        
-    
+    }
 }
 
 module.exports = actions;

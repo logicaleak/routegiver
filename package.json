@@ -15,7 +15,8 @@
     "compression": "*",
     "logicaleak-react-google-maps": "*",
     "google-maps" : "*",
-    "polyline" : "*"
+    "polyline" : "*",
+    "compression": "*"
   },
   "devDependencies": {
     "browser-sync":"*",
