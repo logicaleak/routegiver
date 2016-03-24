@@ -5,13 +5,12 @@ var path = require('path');
 var gulp = require('gulp');
 var compression = require('compression')
 
-
-var port = process.argv.port;
+var port = process.argv[4];
 
 //Inspired from gulp-starter project in github
 var settings = {
   root: path.resolve(process.cwd(), './build'),
-  port: port || 8080,
+  port: port,
   logLevel: 'dev',
   staticOptions: {
     extensions: ['html', 'css', 'js'],
