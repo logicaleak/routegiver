@@ -14,6 +14,26 @@ function convertPolylineToLineStringWKT(polyline) {
     return wkt;
 }
 
+function convertWKTtoPolyline(wkt) {
+    var regExp = /\(([^)]+)\)/;
+    var matches = regExp.exec(wkt);
+    var coordinates = matches[1];
+    var coordinatePairs = coordinates.split(",");
+    var polyline = {};
+    polyline.path = [];
+    coordinatePairs.forEach(function(pair) {
+        var lat_lng = pair.split(" ");
+        var lat = lat_lng[0];
+        var lng = lat_lng[1];
+        polyline.path.push({
+            lat: parseFloat(lat),
+            lng: parseFloat(lng)
+        });
+    });
+    return polyline;
+}
+
 module.exports = {
-    convertPolylineToLineStringWKT: convertPolylineToLineStringWKT
+    convertPolylineToLineStringWKT: convertPolylineToLineStringWKT,
+    convertWKTtoPolyline: convertWKTtoPolyline
 }

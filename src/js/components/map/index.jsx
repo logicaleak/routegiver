@@ -1,7 +1,9 @@
 var React = require('react');
 var GoogleMaps = require('./../react-google-maps/index.jsx');
-var MainStore = require('../../stores/main.js');
 var GeoUtil = require('../../util/geo.js');
+var AppDispatcher = require('../../dispatcher/AppDispatcher');
+var actions = require('../../actions/main.js');
+var actionConstants = require('../../constants/main');
 
 var TheMap = React.createClass({
     getInitialState: function() {
@@ -9,6 +11,7 @@ var TheMap = React.createClass({
             polygons: [],
             markers: [],
             arrows: [],
+            polylines: [],
             center: {lat: 41.087242, lng: 29.006901},
             zoom: 12,
             mapTypeControl: true
@@ -17,7 +20,7 @@ var TheMap = React.createClass({
     
     _onDirectionCalculated: function(polyline) {
         var wkt = GeoUtil.convertPolylineToLineStringWKT(polyline);
-        this.props.onWkt(wkt);
+        actions.sendWkt(wkt);
     } ,
     
     _onClick(event) {
@@ -46,28 +49,46 @@ var TheMap = React.createClass({
     
     componentDidMount: function() {
         var that = this;
-        MainStore.addExecutionListener(function() {
-            
-            if (that.state.markers.length === 2) {
-                console.log('GOT IN');
-                console.log(that.state.markers.length);
-                var start = that.state.markers[0];
-                var end = that.state.markers[1];
-                var direction = {startPoint:{lat: start.coordinates.lat, lng: start.coordinates.lng}, endPoint:{lat: end.coordinates.lat, lng:end.coordinates.lng}};
-                that.setState({direction:direction});
-            } else {
-                alert('Not enough markers!');
+        
+        AppDispatcher.register(function(action) {
+            switch (action.actionType) {
+                case actionConstants.EXECUTE_FROM_POLYLINE:
+                    if (that.state.markers.length === 2) {
+                        console.log(that.state.markers.length);
+                        var start = that.state.markers[0];
+                        var end = that.state.markers[1];
+                        var direction = {startPoint:{lat: start.coordinates.lat, lng: start.coordinates.lng}, endPoint:{lat: end.coordinates.lat, lng:end.coordinates.lng}};
+                        that.setState({direction:direction});
+                    } else {
+                        alert('Not enough markers!');
+                    }
+                    break;
+                case actionConstants.EXECUTE_FROM_WKT:
+                    var wkt = action.wkt;
+                    var polyline = GeoUtil.convertWKTtoPolyline(wkt);
+                    console.log(polyline);
+                    that.setState({
+                        direction: null,
+                        markers: [],
+                        polylines: [polyline]
+                    });
+                    break;
+                default:
+                    return true;
             }
         });
+        
     },
     
     render : function() {
-        
+        console.log("rendering map");
+        console.log(this.state.polylines);
         return (
             <div className="mapsWrapper">
                 <GoogleMaps 
                     richMarkers={this.state.markers} 
                     polygons={this.state.polygons} 
+                    polylines={this.state.polylines}
                     arrows={this.state.arrows} 
                     center={this.state.center} 
                     zoom={this.state.zoom} 
