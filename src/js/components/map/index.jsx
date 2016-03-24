@@ -54,7 +54,6 @@ var TheMap = React.createClass({
             switch (action.actionType) {
                 case actionConstants.EXECUTE_FROM_POLYLINE:
                     if (that.state.markers.length === 2) {
-                        console.log(that.state.markers.length);
                         var start = that.state.markers[0];
                         var end = that.state.markers[1];
                         var direction = {startPoint:{lat: start.coordinates.lat, lng: start.coordinates.lng}, endPoint:{lat: end.coordinates.lat, lng:end.coordinates.lng}};
@@ -66,10 +65,18 @@ var TheMap = React.createClass({
                 case actionConstants.EXECUTE_FROM_WKT:
                     var wkt = action.wkt;
                     var polyline = GeoUtil.convertWKTtoPolyline(wkt);
-                    console.log(polyline);
                     that.setState({
                         direction: null,
-                        markers: [],
+                        markers: [
+                            {
+                                content: '<div class="markerTextDiv">Start</div>',
+                                coordinates : {lat:polyline.path[0].lat, lng:polyline.path[0].lng}
+                            },
+                            {
+                                content: '<div class="markerTextDiv">End</div>',
+                                coordinates : {lat:polyline.path[polyline.path.length - 1].lat, lng:polyline.path[polyline.path.length - 1].lng}
+                            }
+                        ],
                         polylines: [polyline]
                     });
                     break;
