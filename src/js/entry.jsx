@@ -29,6 +29,11 @@ var App = React.createClass({
         actions.executeFromWkt(wkt);
     },
     
+    onExecutePolygonFromWkt: function() {
+        var wkt = this.refs.textarePolygonFromWkt.value;
+        actions.executePolygonFromWkt(wkt);  
+    },
+    
     onResetClick: function() {
     
     },
@@ -41,8 +46,14 @@ var App = React.createClass({
         AppDispatcher.register(function(action) {
             switch (action.actionType) {
                 case actionConstants.SEND_WKT:
-                    var wkt = action.wkt;
-                    that.refs.textareaFromPolyline.value = wkt;
+                    var wktList = action.wkt;
+                    
+                    var text = "";
+                    wktList.forEach(function(wkt) {
+                        text = text + wkt + "\n\n";
+                    });
+                    
+                    that.refs.textareaFromPolyline.value = text;
                     break;
                 default:
                     return true;
@@ -65,7 +76,10 @@ var App = React.createClass({
                                 FromPolyline
                             </Tab>
                             <Tab>
-                                FromWkt
+                                PolylineFromWkt
+                            </Tab>
+                            <Tab>
+                                PolygonFromWkt
                             </Tab>
                         </TabList>
                         <TabPanel>
@@ -93,6 +107,20 @@ var App = React.createClass({
                             <div className="dataPanel">
                                 <div className="dataDiv">
                                     <textarea ref="textareaFromWkt" className="datatextarea" />
+                                </div>
+                            </div>
+                        </TabPanel>
+                        <TabPanel>
+                            <div className="controlPanel">
+                                
+                                <div className="buttonDiv">
+                                    <button onClick={this.onExecutePolygonFromWkt} className="execute">Execute</button>
+                                </div>
+                            </div>
+                            
+                            <div className="dataPanel">
+                                <div className="dataDiv">
+                                    <textarea ref="textarePolygonFromWkt" className="datatextarea" />
                                 </div>
                             </div>
                         </TabPanel>

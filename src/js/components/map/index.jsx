@@ -18,9 +18,13 @@ var TheMap = React.createClass({
         };
     },
     
-    _onDirectionCalculated: function(polyline) {
-        var wkt = GeoUtil.convertPolylineToLineStringWKT(polyline);
-        actions.sendWkt(wkt);
+    _onDirectionCalculated: function(customFormatPolylineList) {
+        var wktList = customFormatPolylineList.map(function(polyline) {
+            var wkt = GeoUtil.convertPolylineToLineStringWKT(polyline);
+            return wkt;    
+        })
+        
+        actions.sendWkt(wktList);
     } ,
     
     _onClick(event) {
@@ -80,6 +84,14 @@ var TheMap = React.createClass({
                         polylines: [polyline]
                     });
                     break;
+                case actionConstants.EXECUTE_POLYGON_FROM_WKT:
+                    var wkt = action.wkt;
+                    var polygon = GeoUtil.convertWKTtoPolygon(wkt);
+                    that.setState({
+                       direction: null,
+                       polygons: [polygon],
+                       markers: [] 
+                    });
                 default:
                     return true;
             }

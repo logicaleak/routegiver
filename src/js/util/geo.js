@@ -33,7 +33,36 @@ function convertWKTtoPolyline(wkt) {
     return polyline;
 }
 
+function convertWKTtoPolygon(wkt) {
+    var regExp = /\(\(([^)]+)\)\)/;
+    var matches = regExp.exec(wkt);
+    var coordinates = matches[1];
+    var coordinatePairs = coordinates.split(",");
+    
+    //Settings should not be here but whatever for now
+    var polygon = {
+        coordinates : [],
+        strokeColor: '#FF0000',
+        strokeOpacity: 0.8,
+        strokeWeight: 2,
+        fillColor: '#FF0000',
+        fillOpacity: 0.35    
+    }
+    coordinatePairs.forEach(function(pair) {
+        var lat_lng = pair.split(" ");
+        var lat = lat_lng[0];
+        var lng = lat_lng[1];
+        polygon.coordinates.push({
+            lat: parseFloat(lat),
+            lng: parseFloat(lng)
+        });
+    });
+    
+    return polygon;
+}
+
 module.exports = {
     convertPolylineToLineStringWKT: convertPolylineToLineStringWKT,
-    convertWKTtoPolyline: convertWKTtoPolyline
+    convertWKTtoPolyline: convertWKTtoPolyline,
+    convertWKTtoPolygon: convertWKTtoPolygon
 }

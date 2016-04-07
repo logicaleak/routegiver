@@ -15,6 +15,13 @@ var actions = {
         });
     },
     
+    executePolygonFromWkt: function(wkt) {
+        AppDispatcher.dispatch({
+            actionType: actionConstants.EXECUTE_POLYGON_FROM_WKT,
+            wkt: wkt
+        });
+    },
+    
     sendWkt: function(wkt) {
         AppDispatcher.dispatch({
             actionType: actionConstants.SEND_WKT,
@@ -25,6 +32,6 @@ var actions = {
 
 module.exports = actions;
 
-	
+
 
 
